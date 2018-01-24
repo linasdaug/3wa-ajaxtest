@@ -8,3 +8,22 @@
 .blue {
     background-color: blue;
 }
+
+table {
+    margin: 0 auto;
+}
+
+form {
+    margin: 0 auto;
+    width: 400px;
+    padding: 100px;
+    text-align: right;
+}
+
+input {
+    margin: 10px;
+}
+
+.buttonholder {
+    margin: 20px 200px;
+}
