@@ -27,3 +27,20 @@ input {
 .buttonholder {
     margin: 20px 200px;
 }
+
+thead {
+    background-color: black;
+    color: white;
+}
+
+td {
+    min-width: 50px;
+    margin-right: 10px;
+}
+
+.msg {
+    text-align: center;
+    font-style: italic;
+    padding: 20px;
+    color: red;
+}
