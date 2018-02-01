@@ -13,28 +13,27 @@ function escapeScript(text) {
 // Mygtukas Cancel (įvedime New)
 
 function cancelbut() {
-    $("#newform").remove();
-    let newform = $("<form id='newform'>Enter new User:<br>");
-    newform.append("User Name: <input id='newuser' type='text'></input><br>");
-    newform.append("Email: <input id='newemail' type='text'></input><br>");
-    newform.append("Age: <input id='newage' type='text'></input><br>");
-    newform.append("<input id='newsubmit' type='button' value='Submit' onclick=submitbut()></input><br>");
-    newform.append("<input id='newcancel' type='button' value='Cancel' onclick='cancelbut()'></input><br></form>");
-    newform.appendTo("#formholder");
+    $("#entry").remove();
+    // let newform = $("<form id='entry'>Enter new User:<br>");
+    // newform.append("User Name: <input id='newuser' type='text'></input><br>");
+    // newform.append("Email: <input id='newemail' type='text'></input><br>");
+    // newform.append("Age: <input id='newage' type='text'></input><br>");
+    // newform.append("<input id='newsubmit' type='button' value='Submit' onclick=submitbut()></input><br>");
+    // newform.append("<input id='newcancel' type='button' value='Cancel' onclick='cancelbut()'></input><br></form>");
+    // newform.appendTo("#formholder");
 }
 
 
-
-//Mygtukas Submit
+//Mygtukas Submit (įvedime New)
 
 function submitbut() {
 
     if ($("#newuser").val()) {
         let str = {};
         str.id = 5000;
-        str.userName = escapeScript($("#newuser").val());
-        str.eMail = escapeScript($("#newemail").val());
-        let age = $("#newage").val();
+        str.userName = escapeScript($("input#newuser").val());
+        str.eMail = escapeScript($("input#newemail").val());
+        let age = $("input#newage").val();
         str.age = parseInt(age);
         let dataToSend = JSON.stringify(str);
 
@@ -45,13 +44,14 @@ function submitbut() {
                 contentType: "application/json",
                 dataType: "json",
                 success: function(data) {
-                    $("#newform").remove();
+                    $("#entry").remove();
                     let ms = $("<p class='msg'>Item '" + str.userName + "' entered</p><br>");
                     ms.append("<input id='msreturn' type='button' value='Return'></input><br>")
                     ms.appendTo("#formholder");
                     $("#msreturn").click(function(){
                         ms.remove();
                     });
+
                 }
             });
 
@@ -65,30 +65,29 @@ function submitbut() {
 $(document).ready(function(){
 
     $("#listbutton").click(function(){
-        $("#fulltable").remove();
-        $("#fullform").remove();
-        $("#updform").remove();
+        $("#biglist").remove();
+        $("#entry").remove();
         $.ajax({
             url:"http://192.168.1.81:8080/list",
             type: "GET",
             contentType: "application/json",
             success: function(data) {
 
-                listTable = $("<table id='fulltable'>");
-                listTable.append("<thead><tr><td>Id</td><td>User name</td><td>eMail</td><td>Age</td><td></td><td></td></tr></thead>");
+                bigList = $("<table id='biglist'>");
+                bigList.append("<thead><tr><td>Id</td><td>User name</td><td>eMail</td><td>Age</td><td></td><td></td></tr></thead>");
 
                 for (var i = 0; i < data.length; i++) {
-                    listTable.append("<tr id='tr"+i+"'>");
+                    bigList.append("<tr id='tr"+i+"'>");
                     let a = escapeScript(data[i].id + "");
                     let b = escapeScript(data[i].userName + "");
                     let c = escapeScript(data[i].eMail + "");
                     let d = escapeScript(data[i].age + "");
-                    listTable.append("<td class='td"+i+"'>" + a + "</td><td class='td"+i+"'>" + b + "</td><td class='td"+i+"'>" + c + "</td><td class='td"+i+"'>" + d + "</td>");
-                    listTable.append("<td class='td"+i+"'><button id = 'upd" + i + "' type='button' name='button' method='get'>Update</button>" + "</td><td class='td"+i+"'>" + "<button id = " + "'del" + i + "' 'type'='button' name='button'>Delete</button><br>");
-                    listTable.append("</tr>");
+                    bigList.append("<td class='td"+i+"'>" + a + "</td><td class='td"+i+"'>" + b + "</td><td class='td"+i+"'>" + c + "</td><td class='td"+i+"'>" + d + "</td>");
+                    bigList.append("<td class='td"+i+"'><button id = 'upd" + i + "' type='button' name='button' method='get'>Update</button>" + "</td><td class='td"+i+"'>" + "<button id = " + "'del" + i + "' 'type'='button' name='button'>Delete</button><br>");
+                    bigList.append("</tr>");
                 };
-                    listTable.append("</table>");
-                    listTable.appendTo("#formholder");
+                    bigList.append("</table>");
+                    bigList.appendTo("#formholder");
 
 
                     //delete funkcijos pradžia
@@ -111,30 +110,32 @@ $(document).ready(function(){
                             contentType: "application/json",
                             dataType: "json",
                             success: function(data) {
-                                console.log(data);
+                                
+                                let toDelete = ".td"+j;
+                                $(toDelete).remove();
+
+                                toDelete = '#tr'+j;
+                                $(toDelete).remove();
+                                bigList.append("<tr><td colspan=6 class='msg'>Item '" + str.userName + "' deleted</td></tr>");
                             }
                         });
 
-                        let toDelete = ".td"+j;
-                        $(toDelete).remove();
 
-                        toDelete = '#tr'+j;
-                        $(toDelete).remove();
-                        listTable.append("<tr><td colspan=6 class='msg'>Item '" + str.userName + "' deleted</td></tr>");
                     });
 
                     /*delete funkcijos pabaiga, update pradžia*/
 
                         $("#upd"+j).click(function(){
-                            $("#fulltable").remove();
+                            $("#biglist").remove();
                             // let updated = false;
+
 
                             let ustr = {};
                             ustr.id = parseInt(data[j].id);
                             ustr.userName = escapeScript(data[j].userName);
                             ustr.eMail = escapeScript(data[j].eMail);
                             ustr.age = parseInt(data[j].age);
-                            updform = $("<form id='updform'>Update user data:<br>");
+                            updform = $("<form id='entry'>Update user data:<br>");
                             updform.append("User Name: <input id='upduser' type='text' value = '" + ustr.userName + "'></input><br>");
                             updform.append("Email: <input id='updemail' type='text' value = '"+ ustr.eMail +"'></input><br>");
                             updform.append("Age: <input id='updage' type='text' value = '"+ ustr.age +"'></input><br>");
@@ -153,7 +154,7 @@ $(document).ready(function(){
                             ustr.age = parseInt(age);
 
                             let dataToSend = JSON.stringify(ustr);
-
+                            console.log(dataToSend);
 
                                 $.ajax({
                                     url:"http://192.168.1.81:8080/update",
@@ -163,12 +164,12 @@ $(document).ready(function(){
                                     dataType: "json",
                                     success: function(data) {
 
-                                        $("#updform").append("User '" + ustr.userName + "' updated")
-                                        $("#updform").append("<input id='updreturn' type='button' value='Return'></input><br>")
+                                        $("#entry").append("User '" + ustr.userName + "' updated")
+                                        $("#entry").append("<input id='updreturn' type='button' value='Return'></input><br>")
                                         updated = true;
 
                                         $("#updreturn").click(function(){
-                                            $("#updform").remove();
+                                            $("#entry").remove();
                                         });
                                     }
                                 });
@@ -188,11 +189,11 @@ $(document).ready(function(){
 
                             $("#updcancel").click(function(){
 
-                                $("#fullform").remove();
+                                $("#entry").remove();
                             });
 
 
-                            // $("form").remove();
+                            // $("#entry").remove();
                     }); /* update funkcijos pabaiga*/
                 };
                     // delete-update pabaiga
@@ -205,9 +206,9 @@ $(document).ready(function(){
 
     $("#newbutton").click(function(){
 
-        $("#fulltable").remove();
-        $("#fullform").remove();
-        let newform = $("<form id='newform'>Enter new User:<br>");
+        $("#biglist").remove();
+        $("#entry").remove();
+        let newform = $("<form id='entry'>Enter new User:<br>");
         newform.append("User Name: <input id='newuser' type='text'></input><br>");
         newform.append("Email: <input id='newemail' type='text'></input><br>");
         newform.append("Age: <input id='newage' type='text'></input><br>");
